@@ -13,7 +13,6 @@ import { ScrollTriggeredCounter } from "@/components/animations/scroll-triggered
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 export function Hero() {
-
     const { scrollYProgress } = useScroll();
     const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
     const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.9]);
@@ -23,7 +22,7 @@ export function Hero() {
             {/* Enhanced Hero Section */}
             <section
                 id="home"
-                className="relative px-12 py-24 md:py-32 overflow-hidden"
+                className="relative px-4 sm:px-6 lg:px-12 py-24 md:py-32 overflow-hidden"
             >
                 {/* Animated Background Elements with Parallax */}
                 <ParallaxSection speed={-0.3}>
@@ -91,17 +90,17 @@ export function Hero() {
                     />
                 </ParallaxSection>
 
-                <div className="container mx-auto px-6 lg:px-8 relative z-10">
-                    <div className="flex flex-col lg:flex-row items-center gap-16">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
                         {/* Left Content with Enhanced Animations */}
                         <motion.div
-                            className="flex-1 text-left max-w-2xl"
+                            className="flex-1 text-center lg:text-left max-w-2xl"
                             initial={{ opacity: 0, x: -50 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.8, delay: 0.2 }}
                         >
-                            <ScrollRevealEnhanced justify="start" direction="scale" delay={0}>
-                                <Badge className="mb-6 bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10">
+                            <ScrollRevealEnhanced justify="center lg:justify-start" direction="scale" delay={0}>
+                                <Badge className="mb-4 sm:mb-6 bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10">
                                     <motion.span
                                         animate={{ scale: [1, 1.2, 1] }}
                                         transition={{
@@ -117,24 +116,24 @@ export function Hero() {
                             </ScrollRevealEnhanced>
                             <StaggeredText
                                 text="Create stunning digital experiences"
-                                className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight"
+                                className="text-3xl sm:text-start sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 tracking-tight leading-tight"
                                 delay={0.1}
                             />
-                            <ScrollRevealEnhanced direction="up" delay={0.3} justify="start">
-                                <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-3xl">
+                            <ScrollRevealEnhanced direction="up" delay={0.3} justify="center lg:justify-start">
+                                <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-6 sm:mb-8 max-w-3xl mx-auto lg:mx-0">
                                     S8Builder empowers you to design and deploy high-performance
                                     websites, dashboards, and apps without writing backend code.
                                     Launch faster, scale smarter.
                                 </p>
                             </ScrollRevealEnhanced>
 
-                            <ScrollRevealEnhanced direction="up" delay={0.4} justify="start">
-                                <div className="flex flex-col sm:flex-row gap-4 mb-12">
+                            <ScrollRevealEnhanced direction="up" delay={0.4} justify="center lg:justify-start">
+                                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-12 justify-center lg:justify-start">
                                     <MagneticElement strength={0.2}>
                                         <Link to="/signup">
                                             <Button
                                                 size="lg"
-                                                className="bg-white text-black hover:bg-gray-100 transition-all duration-300 shadow-lg shadow-white/10 group transform hover:scale-105"
+                                                className="w-full sm:w-auto bg-white text-black hover:bg-gray-100 transition-all duration-300 shadow-lg shadow-white/10 group transform hover:scale-105"
                                             >
                                                 Start building for free
                                                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -146,7 +145,7 @@ export function Hero() {
                                         <Button
                                             size="lg"
                                             variant="outline"
-                                            className="border-white/20 hover:bg-white/5 bg-transparent group transform hover:scale-105 transition-all duration-300"
+                                            className="w-full sm:w-auto border-white/20 hover:bg-white/5 bg-transparent group transform hover:scale-105 transition-all duration-300"
                                         >
                                             <motion.span
                                                 animate={{ scale: [1, 1.1, 1] }}
@@ -167,7 +166,7 @@ export function Hero() {
 
                             {/* Enhanced Stats Indicators */}
                             <motion.div
-                                className="flex justify-between items-center gap-12 mt-4 flex-wrap md:flex-nowrap"
+                                className="flex flex-row sm:grid sm:grid-cols-3 gap-6 sm:gap-8 lg:gap-12"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.6, duration: 0.8 }}
@@ -182,9 +181,10 @@ export function Hero() {
                                         direction="scale"
                                         delay={0.6 + index * 0.1}
                                         stagger={index * 0.1}
+                                        justify="center lg:justify-start"
                                     >
                                         <motion.div
-                                            className="flex flex-col items-start md:items-center"
+                                            className="flex flex-col items-center lg:items-start"
                                             whileHover={{ scale: 1.05 }}
                                             transition={{
                                                 type: "spring",
@@ -192,10 +192,10 @@ export function Hero() {
                                                 damping: 20,
                                             }}
                                         >
-                                            <span className="text-white font-bold text-2xl">
+                                            <span className="text-white font-bold text-xl sm:text-2xl">
                                                 {stat.value}
                                             </span>
-                                            <span className="text-gray-400 text-sm">
+                                            <span className="text-gray-400 text-xs sm:text-sm">
                                                 {stat.label}
                                             </span>
                                         </motion.div>
@@ -205,11 +205,11 @@ export function Hero() {
                         </motion.div>
 
                         {/* Right Content - Hero Image with Enhanced Parallax */}
-                        <ParallaxSection speed={-0.2} className="flex-1 relative">
+                        <ParallaxSection speed={-0.2} className="flex-1 relative w-full lg:w-auto">
                             <ScrollRevealEnhanced direction="scale" delay={0.4}>
                                 <div className="absolute -inset-1 bg-gradient-to-r from-white/10 to-gray-400/10 rounded-lg blur-lg opacity-75 animate-pulse-glow"></div>
                                 <motion.div
-                                    className="relative bg-[#000000] border border-white/10 rounded-lg overflow-hidden"
+                                    className="relative bg-[#000000] border border-white/10 rounded-lg overflow-hidden max-w-full"
                                     whileHover={{
                                         y: -10,
                                         rotateX: 5,
@@ -220,7 +220,7 @@ export function Hero() {
                                     style={{ transformStyle: "preserve-3d" }}
                                 >
                                     <img
-                                        src="/dark-web-builder.png"
+                                        src="https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg"
                                         width={1200}
                                         height={600}
                                         alt="S8Builder Interface"
@@ -229,7 +229,7 @@ export function Hero() {
 
                                     {/* Enhanced Floating UI Elements */}
                                     <motion.div
-                                        className="absolute top-5 right-5 bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg p-2 flex items-center"
+                                        className="absolute top-3 sm:top-5 right-3 sm:right-5 bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg p-2 flex items-center"
                                         animate={{
                                             y: [0, -8, 0],
                                             rotate: [0, 2, 0],
@@ -245,7 +245,7 @@ export function Hero() {
                                     </motion.div>
 
                                     <motion.div
-                                        className="absolute bottom-5 left-5 bg-gray-400/10 backdrop-blur-sm border border-white/10 rounded-lg p-2 flex items-center"
+                                        className="absolute bottom-3 sm:bottom-5 left-3 sm:left-5 bg-gray-400/10 backdrop-blur-sm border border-white/10 rounded-lg p-2 flex items-center"
                                         animate={{
                                             y: [0, -8, 0],
                                             rotate: [0, -2, 0],
@@ -285,10 +285,10 @@ export function Hero() {
             </section>
 
             {/* Enhanced Stats Section */}
-            <section className="py-20 px-12 bg-black/20 border-y border-white/10 relative overflow-hidden">
+            <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-12 bg-black/20 border-y border-white/10 relative overflow-hidden">
                 <ParallaxSection speed={0.1}>
-                    <div className="container mx-auto px-6 lg:px-8">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
                             {[
                                 { label: "Active Users", value: 10000, suffix: "+" },
                                 { label: "Projects Created", value: 50000, suffix: "+" },
@@ -302,10 +302,10 @@ export function Hero() {
                                             whileHover={{ scale: 1.05 }}
                                             transition={{ type: "spring", stiffness: 300, damping: 20 }}
                                         >
-                                            <h3 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                                            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
                                                 <ScrollTriggeredCounter end={stat.value} suffix={stat.suffix} />
                                             </h3>
-                                            <p className="text-gray-400">{stat.label}</p>
+                                            <p className="text-gray-400 text-sm sm:text-base">{stat.label}</p>
                                         </motion.div>
                                     </MagneticElement>
                                 </ScrollRevealEnhanced>
@@ -314,7 +314,6 @@ export function Hero() {
                     </div>
                 </ParallaxSection>
             </section>
-
         </>
     );
 }
