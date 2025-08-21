@@ -92,43 +92,27 @@ export function Hero() {
 
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
-                        {/* Left Content with Enhanced Animations */}
                         <motion.div
-                            className="flex-1 text-center lg:text-left max-w-2xl"
+                            className="flex-1 text-left max-w-2xl"
                             initial={{ opacity: 0, x: -50 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.8, delay: 0.2 }}
                         >
-                            <ScrollRevealEnhanced justify="center lg:justify-start" direction="scale" delay={0}>
-                                <Badge className="mb-4 sm:mb-6 bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10">
-                                    <motion.span
-                                        animate={{ scale: [1, 1.2, 1] }}
-                                        transition={{
-                                            duration: 2,
-                                            repeat: Number.POSITIVE_INFINITY,
-                                        }}
-                                        className="mr-2"
-                                    >
-                                        ✨
-                                    </motion.span>
-                                    Build Without Limits
-                                </Badge>
-                            </ScrollRevealEnhanced>
                             <StaggeredText
                                 text="Create stunning digital experiences"
                                 className="text-3xl sm:text-start sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 tracking-tight leading-tight"
                                 delay={0.1}
                             />
-                            <ScrollRevealEnhanced direction="up" delay={0.3} justify="center lg:justify-start">
-                                <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-6 sm:mb-8 max-w-3xl mx-auto lg:mx-0">
+                            <ScrollRevealEnhanced direction="up" delay={0.3} justify="start">
+                                <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-6 sm:mb-8 max-w-3xl mx-auto lg:mx-0 text-left">
                                     S8Builder empowers you to design and deploy high-performance
                                     websites, dashboards, and apps without writing backend code.
                                     Launch faster, scale smarter.
                                 </p>
                             </ScrollRevealEnhanced>
 
-                            <ScrollRevealEnhanced direction="up" delay={0.4} justify="center lg:justify-start">
-                                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-12 justify-center lg:justify-start">
+                            <ScrollRevealEnhanced direction="up" delay={0.4} justify="start">
+                                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-12 justify-start">
                                     <MagneticElement strength={0.2}>
                                         <Link to="/signup">
                                             <Button
@@ -147,128 +131,80 @@ export function Hero() {
                                             variant="outline"
                                             className="w-full sm:w-auto border-white/20 hover:bg-white/5 bg-transparent group transform hover:scale-105 transition-all duration-300"
                                         >
-                                            <motion.span
-                                                animate={{ scale: [1, 1.1, 1] }}
-                                                transition={{
-                                                    duration: 2,
-                                                    repeat: Number.POSITIVE_INFINITY,
-                                                    delay: 1,
-                                                }}
-                                                className="mr-2"
-                                            >
-                                                👀
-                                            </motion.span>
                                             Watch demo
                                         </Button>
                                     </MagneticElement>
                                 </div>
                             </ScrollRevealEnhanced>
-
-                            {/* Enhanced Stats Indicators */}
-                            <motion.div
-                                className="flex flex-row sm:grid sm:grid-cols-3 gap-6 sm:gap-8 lg:gap-12"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.6, duration: 0.8 }}
-                            >
-                                {[
-                                    { label: "Active Users", value: "10K+" },
-                                    { label: "Projects Created", value: "50K+" },
-                                    { label: "Satisfaction Rate", value: "99%" },
-                                ].map((stat, index) => (
-                                    <ScrollRevealEnhanced
-                                        key={index}
-                                        direction="scale"
-                                        delay={0.6 + index * 0.1}
-                                        stagger={index * 0.1}
-                                        justify="center lg:justify-start"
-                                    >
-                                        <motion.div
-                                            className="flex flex-col items-center lg:items-start"
-                                            whileHover={{ scale: 1.05 }}
-                                            transition={{
-                                                type: "spring",
-                                                stiffness: 300,
-                                                damping: 20,
-                                            }}
-                                        >
-                                            <span className="text-white font-bold text-xl sm:text-2xl">
-                                                {stat.value}
-                                            </span>
-                                            <span className="text-gray-400 text-xs sm:text-sm">
-                                                {stat.label}
-                                            </span>
-                                        </motion.div>
-                                    </ScrollRevealEnhanced>
-                                ))}
-                            </motion.div>
                         </motion.div>
+                        {/*
+                            Only show on large screens and above.
+                            Hidden on small (sm) and medium (md) screens.
+                        */}
+                        <div className="hidden lg:flex flex-1 relative w-full lg:w-auto">
+                                <ParallaxSection speed={-0.2} className="w-full">
+                                        <ScrollRevealEnhanced direction="scale" delay={0.4}>
+                                                <div className="absolute -inset-1 bg-gradient-to-r from-white/10 to-gray-400/10 rounded-lg blur-lg opacity-75 animate-pulse-glow"></div>
+                                                <motion.div
+                                                        className="relative bg-[#000000] border border-white/10 rounded-lg overflow-hidden max-w-full"
+                                                        whileHover={{
+                                                                y: -10,
+                                                                rotateX: 5,
+                                                                rotateY: 5,
+                                                                boxShadow: "0 25px 50px -12px rgba(255, 255, 255, 0.15)",
+                                                        }}
+                                                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                                        style={{ transformStyle: "preserve-3d" }}
+                                                >
+                                                        <img
+                                                                src="https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg"
+                                                                width={1200}
+                                                                height={600}
+                                                                alt="S8Builder Interface"
+                                                                className="w-full h-auto"
+                                                        />
 
-                        {/* Right Content - Hero Image with Enhanced Parallax */}
-                        <ParallaxSection speed={-0.2} className="flex-1 relative w-full lg:w-auto">
-                            <ScrollRevealEnhanced direction="scale" delay={0.4}>
-                                <div className="absolute -inset-1 bg-gradient-to-r from-white/10 to-gray-400/10 rounded-lg blur-lg opacity-75 animate-pulse-glow"></div>
-                                <motion.div
-                                    className="relative bg-[#000000] border border-white/10 rounded-lg overflow-hidden max-w-full"
-                                    whileHover={{
-                                        y: -10,
-                                        rotateX: 5,
-                                        rotateY: 5,
-                                        boxShadow: "0 25px 50px -12px rgba(255, 255, 255, 0.15)",
-                                    }}
-                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                    style={{ transformStyle: "preserve-3d" }}
-                                >
-                                    <img
-                                        src="https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg"
-                                        width={1200}
-                                        height={600}
-                                        alt="S8Builder Interface"
-                                        className="w-full h-auto"
-                                    />
+                                                        {/* Enhanced Floating UI Elements */}
+                                                        <motion.div
+                                                                className="absolute top-3 sm:top-5 right-3 sm:right-5 bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg p-2 flex items-center"
+                                                                animate={{
+                                                                        y: [0, -8, 0],
+                                                                        rotate: [0, 2, 0],
+                                                                }}
+                                                                transition={{
+                                                                        duration: 3,
+                                                                        repeat: Number.POSITIVE_INFINITY,
+                                                                        ease: "easeInOut",
+                                                                }}
+                                                                whileHover={{ scale: 1.1 }}
+                                                        >
+                                                                <span className="text-xs text-white">✓ Live Preview</span>
+                                                        </motion.div>
 
-                                    {/* Enhanced Floating UI Elements */}
-                                    <motion.div
-                                        className="absolute top-3 sm:top-5 right-3 sm:right-5 bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg p-2 flex items-center"
-                                        animate={{
-                                            y: [0, -8, 0],
-                                            rotate: [0, 2, 0],
-                                        }}
-                                        transition={{
-                                            duration: 3,
-                                            repeat: Number.POSITIVE_INFINITY,
-                                            ease: "easeInOut",
-                                        }}
-                                        whileHover={{ scale: 1.1 }}
-                                    >
-                                        <span className="text-xs text-white">✓ Live Preview</span>
-                                    </motion.div>
-
-                                    <motion.div
-                                        className="absolute bottom-3 sm:bottom-5 left-3 sm:left-5 bg-gray-400/10 backdrop-blur-sm border border-white/10 rounded-lg p-2 flex items-center"
-                                        animate={{
-                                            y: [0, -8, 0],
-                                            rotate: [0, -2, 0],
-                                        }}
-                                        transition={{
-                                            duration: 3,
-                                            repeat: Number.POSITIVE_INFINITY,
-                                            ease: "easeInOut",
-                                            delay: 1,
-                                        }}
-                                        whileHover={{ scale: 1.1 }}
-                                    >
-                                        <span className="text-xs text-white">
-                                            ⚡ No-code Builder
-                                        </span>
-                                    </motion.div>
-                                </motion.div>
-                            </ScrollRevealEnhanced>
-                        </ParallaxSection>
+                                                        <motion.div
+                                                                className="absolute bottom-3 sm:bottom-5 left-3 sm:left-5 bg-gray-400/10 backdrop-blur-sm border border-white/10 rounded-lg p-2 flex items-center"
+                                                                animate={{
+                                                                        y: [0, -8, 0],
+                                                                        rotate: [0, -2, 0],
+                                                                }}
+                                                                transition={{
+                                                                        duration: 3,
+                                                                        repeat: Number.POSITIVE_INFINITY,
+                                                                        ease: "easeInOut",
+                                                                        delay: 1,
+                                                                }}
+                                                                whileHover={{ scale: 1.1 }}
+                                                        >
+                                                                <span className="text-xs text-white">
+                                                                        ⚡ No-code Builder
+                                                                </span>
+                                                        </motion.div>
+                                                </motion.div>
+                                        </ScrollRevealEnhanced>
+                                </ParallaxSection>
+                        </div>
                     </div>
                 </div>
-
-                {/* Enhanced Scroll Indicator */}
                 <motion.div
                     className="scroll-indicator hidden md:block"
                     animate={{
@@ -285,35 +221,7 @@ export function Hero() {
             </section>
 
             {/* Enhanced Stats Section */}
-            <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-12 bg-black/20 border-y border-white/10 relative overflow-hidden">
-                <ParallaxSection speed={0.1}>
-                    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
-                            {[
-                                { label: "Active Users", value: 10000, suffix: "+" },
-                                { label: "Projects Created", value: 50000, suffix: "+" },
-                                { label: "Components", value: 500, suffix: "+" },
-                                { label: "Deployments", value: 100000, suffix: "+" },
-                            ].map((stat, index) => (
-                                <ScrollRevealEnhanced key={index} delay={index * 0.1} direction="scale">
-                                    <MagneticElement strength={0.1}>
-                                        <motion.div
-                                            className="text-center"
-                                            whileHover={{ scale: 1.05 }}
-                                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                        >
-                                            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
-                                                <ScrollTriggeredCounter end={stat.value} suffix={stat.suffix} />
-                                            </h3>
-                                            <p className="text-gray-400 text-sm sm:text-base">{stat.label}</p>
-                                        </motion.div>
-                                    </MagneticElement>
-                                </ScrollRevealEnhanced>
-                            ))}
-                        </div>
-                    </div>
-                </ParallaxSection>
-            </section>
+          
         </>
     );
 }

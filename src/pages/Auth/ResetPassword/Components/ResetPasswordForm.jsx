@@ -44,10 +44,10 @@ const handleConfirmPasswordChange = (value) => {
   const error = value !== password ? "Passwords do not match" : "";
   setErrors((prev) => ({ ...prev, confirmPassword: error }));
 };
-
 const handleSubmit = async (e) => {
   e.preventDefault();
 
+  // Validate passwords
   const passwordError = validatePassword(password);
   const confirmError = password !== confirmPassword ? "Passwords do not match" : "";
 
@@ -57,75 +57,91 @@ const handleSubmit = async (e) => {
   }
 
   setIsLoading(true);
+  setErrors({ password: "", confirmPassword: "" });
   try {
-    const payload = { token, password };
+    // Updated payload to match backend field name
+    const payload = { token, new_password: password };
     await API.post("/auth/reset-password", payload);
+
     setIsSuccess(true);
+
+    // Optional: Auto-redirect to login after 3 seconds
+    setTimeout(() => {
+      window.location.href = "/login";
+    }, 3000);
   } catch (error) {
     console.error("Reset error:", error);
+
+    const backendError =
+      error.response?.data?.detail ||
+      error.response?.data?.message ||
+      "Something went wrong. Try again.";
+
     setErrors((prev) => ({
       ...prev,
-      password: error.response?.data?.detail || "Something went wrong. Try again.",
+      password: backendError,
     }));
   } finally {
     setIsLoading(false);
   }
 };
 
-
-  const getPasswordStrength = () => {
-    if (password.length === 0) return { strength: 0, text: "" };
-    if (password.length < 6) return { strength: 1, text: "Weak" };
-    if (password.length < 8 || !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-      return { strength: 2, text: "Medium" };
-    }
-    return { strength: 3, text: "Strong" };
-  };
-
-  const passwordStrength = getPasswordStrength();
-
-  if (!token) {
-    return (
-      <Card className="glass-card w-full max-w-md mx-auto fade-in-up delay-200">
-        <CardHeader className="text-center space-y-2">
-          <CardTitle className="text-2xl font-bold text-destructive">Invalid Reset Link</CardTitle>
-          <CardDescription className="text-muted-foreground">
-            This password reset link is invalid or has expired
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Link to="/forgot-password">
-            <Button className="w-full btn-gradient">
-              Request New Reset Link
-            </Button>
-          </Link>
-        </CardContent>
-      </Card>
-    );
+const getPasswordStrength = () => {
+  if (password.length === 0) return { strength: 0, text: "" };
+  if (password.length < 6) return { strength: 1, text: "Weak" };
+  if (password.length < 8 || !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
+    return { strength: 2, text: "Medium" };
   }
+  return { strength: 3, text: "Strong" };
+};
 
-  if (isSuccess) {
-    return (
-      <Card className="glass-card w-full max-w-md mx-auto fade-in-up delay-200">
-        <CardHeader className="text-center space-y-2">
-          <div className="mx-auto w-16 h-16 bg-success/20 rounded-full flex items-center justify-center mb-4">
-            <CheckCircle className="w-8 h-8 text-success" />
-          </div>
-          <CardTitle className="text-2xl font-bold text-foreground">Password Reset Successfully</CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Your password has been updated. You can now sign in with your new password.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Link to="/login">
-            <Button className="w-full btn-gradient">
-              Sign In Now
-            </Button>
-          </Link>
-        </CardContent>
-      </Card>
-    );
-  }
+const passwordStrength = getPasswordStrength();
+
+// Handle invalid token
+if (!token) {
+  return (
+    <Card className="glass-card w-full max-w-md mx-auto fade-in-up delay-200">
+      <CardHeader className="text-center space-y-2">
+        <CardTitle className="text-2xl font-bold text-destructive">Invalid Reset Link</CardTitle>
+        <CardDescription className="text-muted-foreground">
+          This password reset link is invalid or has expired
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Link to="/forgot-password">
+          <Button className="w-full btn-gradient">
+            Request New Reset Link
+          </Button>
+        </Link>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Handle successful password reset
+if (isSuccess) {
+  return (
+    <Card className="glass-card w-full max-w-md mx-auto fade-in-up delay-200">
+      <CardHeader className="text-center space-y-2">
+        <div className="mx-auto w-16 h-16 bg-success/20 rounded-full flex items-center justify-center mb-4">
+          <CheckCircle className="w-8 h-8 text-success" />
+        </div>
+        <CardTitle className="text-2xl font-bold text-foreground">Password Reset Successfully</CardTitle>
+        <CardDescription className="text-muted-foreground">
+          Your password has been updated. Redirecting to login...
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Link to="/login">
+          <Button className="w-full btn-gradient">
+            Sign In Now
+          </Button>
+        </Link>
+      </CardContent>
+    </Card>
+  );
+}
+
 
   return (
     <>

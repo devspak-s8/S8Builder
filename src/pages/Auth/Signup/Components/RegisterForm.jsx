@@ -1,22 +1,35 @@
-import React, { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock, User, CheckCircle, XCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import RocketAnimation from '../../../../components/RocketAnimation';
+import React, { useState } from "react";
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  User,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import API from "../../../../utils/axios";
+import { LoadingOverlay } from "@/components/ui/loading-overlay";
+import { ErrorModal } from "@/components/ui/error-modal";
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showRocket, setShowRocket] = useState(false);
-  const [message, setMessage] = useState('');
+
+  const [loadingState, setLoadingState] = useState({
+    isVisible: false,
+    status: "loading",
+    errorMessage: "",
+  });
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -31,85 +44,110 @@ const RegisterForm = () => {
   };
 
   const passwordStrength = getPasswordStrength(formData.password);
-  const passwordsMatch = formData.password === formData.confirmPassword && formData.confirmPassword !== '';
+  const passwordsMatch =
+    formData.password === formData.confirmPassword &&
+    formData.confirmPassword !== "";
 
   const getStrengthColor = (strength) => {
-    if (strength < 2) return 'bg-destructive';
-    if (strength < 4) return 'bg-warning';
-    return 'bg-success';
+    if (strength < 2) return "bg-destructive";
+    if (strength < 4) return "bg-warning";
+    return "bg-success";
   };
 
   const getStrengthText = (strength) => {
-    if (strength < 2) return 'Weak';
-    if (strength < 4) return 'Medium';
-    return 'Strong';
-  };
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  const { fullName, email, password, confirmPassword } = formData;
-
-  // Frontend validations
-  if (!fullName || !email || !password || !confirmPassword) {
-    setMessage("⚠️ Please fill in all fields.");
-    return;
-  }
-
-  if (password !== confirmPassword) {
-    setMessage("❌ Passwords do not match.");
-    return;
-  }
-
-  if (passwordStrength < 3) {
-    setMessage("⚠️ Password is too weak.");
-    return;
-  }
-
-  // Backend payload (excluding confirmPassword)
-  const payload = {
-    name: fullName,
-    email,
-    password,
+    if (strength < 2) return "Weak";
+    if (strength < 4) return "Medium";
+    return "Strong";
   };
 
-  try {
-    setIsLoading(true);
-    setShowRocket(true);
-    setMessage("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { fullName, email, password, confirmPassword } = formData;
 
-    const response = await API.post("/auth/register", payload);
-    setMessage("✅ Account created successfully!");
-    console.log(response.data);
-    setTimeout(() => {
-      setShowRocket(false);
-      navigate("/user-dashboard");
-    }, 2000);
-  } catch (err) {
-    const errorData = err.response?.data;
-    console.log(err.response.data);
-    if (Array.isArray(errorData?.detail)) {
-      const combinedErrors = errorData.detail.map((e) => `❌ ${e.msg}`).join(" ");
-      setMessage(combinedErrors);
-    } else {
-      setMessage(errorData?.detail || "❌ Registration failed. Please try again.");
+    // Frontend validation
+    if (!fullName || !email || !password || !confirmPassword) {
+      setLoadingState({
+        isVisible: true,
+        status: "error",
+        errorMessage: "⚠️ Please fill in all fields.",
+      });
+      setShowErrorModal(true);
+      return;
     }
 
-    setShowRocket(false);
-    setIsLoading(false);
-  }
-};
+    if (password !== confirmPassword) {
+      setLoadingState({
+        isVisible: true,
+        status: "error",
+        errorMessage: "❌ Passwords do not match.",
+      });
+      setShowErrorModal(true);
+      return;
+    }
 
-  const handleRocketComplete = () => {
-    setShowRocket(false);
-    setIsLoading(false);
+    if (passwordStrength < 3) {
+      setLoadingState({
+        isVisible: true,
+        status: "error",
+        errorMessage: "⚠️ Password is too weak.",
+      });
+      setShowErrorModal(true);
+      return;
+    }
+
+    const payload = { name: fullName, email, password };
+
+    try {
+      setLoadingState({ isVisible: true, status: "loading", errorMessage: "" });
+
+      const response = await API.post("/auth/register", payload);
+
+      // Store the registered email in sessionStorage & localStorage
+      sessionStorage.setItem("pendingEmail", email);
+      localStorage.setItem("lastRegisteredEmail", email);
+
+      setLoadingState({
+        isVisible: true,
+        status: "success",
+        errorMessage: response.data.msg,
+      });
+
+      setTimeout(() => {
+        setLoadingState((prev) => ({ ...prev, isVisible: false }));
+        navigate("/login", { replace: true });
+      }, 4000);
+
+    } catch (err) {
+      let errorMessage = "❌ Registration failed. Please try again.";
+      if (err.response?.data) {
+        const data = err.response.data;
+        if (Array.isArray(data?.detail)) {
+          errorMessage = data.detail.map((d) => `❌ ${d.msg}`).join(" ");
+        } else if (typeof data?.detail === "string") {
+          errorMessage = `❌ ${data.detail}`;
+        } else if (typeof data?.message === "string") {
+          errorMessage = `❌ ${data.message}`;
+        }
+      }
+
+      setLoadingState({ isVisible: true, status: "error", errorMessage });
+      setTimeout(() => {
+        setLoadingState((prev) => ({ ...prev, isVisible: false }));
+        setShowErrorModal(true);
+      }, 2000);
+    }
   };
 
   return (
     <>
       <div className="glass-card p-8 lg:p-12 w-full max-w-md fade-in-up delay-300">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-foreground mb-2">Create Account</h2>
-          <p className="text-muted-foreground">Join S8Builder and start building amazing applications.</p>
+          <h2 className="text-3xl font-bold text-foreground mb-2">
+            Create Account
+          </h2>
+          <p className="text-muted-foreground">
+            Join S8Builder and start building amazing applications.
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -169,12 +207,18 @@ const handleSubmit = async (e) => {
                 {showPassword ? <EyeOff /> : <Eye />}
               </button>
             </div>
-
             {formData.password && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
                   <span>Password strength</span>
-                  <span className={`font-medium ${passwordStrength < 2 ? 'text-destructive' : passwordStrength < 4 ? 'text-warning' : 'text-success'}`}>
+                  <span
+                    className={`font-medium ${passwordStrength < 2
+                      ? "text-destructive"
+                      : passwordStrength < 4
+                        ? "text-warning"
+                        : "text-success"
+                      }`}
+                  >
                     {getStrengthText(passwordStrength)}
                   </span>
                 </div>
@@ -182,9 +226,10 @@ const handleSubmit = async (e) => {
                   {[...Array(5)].map((_, i) => (
                     <div
                       key={i}
-                      className={`h-1 flex-1 rounded-full ${
-                        i < passwordStrength ? getStrengthColor(passwordStrength) : 'bg-muted'
-                      }`}
+                      className={`h-1 flex-1 rounded-full ${i < passwordStrength
+                        ? getStrengthColor(passwordStrength)
+                        : "bg-muted"
+                        }`}
                     />
                   ))}
                 </div>
@@ -235,27 +280,28 @@ const handleSubmit = async (e) => {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={isLoading || !passwordsMatch || passwordStrength < 3}
+            disabled={loadingState.isVisible || !passwordsMatch || passwordStrength < 3}
             className="btn-gradient w-full disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? "Creating Account..." : "Create Account"}
+            {loadingState.status === "loading" ? "Create Account" : "Creating Account..."}
           </button>
         </form>
-
-        {message && <p className="mt-4 text-center">{message}</p>}
-
-        <div className="mt-8 text-center">
-          <p className="text-muted-foreground">
-            Already have an account?{" "}
-            <a href="/login" className="text-primary hover:text-primary-glow font-medium transition-colors">Sign in</a>
-          </p>
-        </div>
       </div>
 
-      <RocketAnimation
-        isVisible={showRocket}
-        message="Creating Account..."
-        onComplete={handleRocketComplete}
+      <LoadingOverlay
+        isVisible={!!loadingState.isVisible}
+        status={loadingState.status || "loading"}
+        loadingText="Creating Account..."
+        successText="Account created successfully!"
+        errorText={loadingState.errorMessage || "Something went wrong"}
+        onComplete={() => setLoadingState((prev) => ({ ...prev, isVisible: false }))}
+      />
+
+      <ErrorModal
+        isOpen={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="Registration Failed"
+        message={loadingState.errorMessage || "Something went wrong"}
       />
     </>
   );

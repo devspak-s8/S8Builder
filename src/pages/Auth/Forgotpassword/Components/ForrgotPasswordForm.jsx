@@ -67,7 +67,8 @@ const handleSubmit = async (e) => {
 
   return (
     <>
-      <Card className="glass-card w-full max-w-md mx-auto fade-in-up delay-200">
+    
+      <Card className="glass-card p-8 lg:p-12 w-full max-w-md fade-in-up delay-300">
         <CardHeader className="text-center space-y-2">
           <CardTitle className="text-2xl font-bold text-foreground">Forgot Password?</CardTitle>
           <CardDescription className="text-muted-foreground">

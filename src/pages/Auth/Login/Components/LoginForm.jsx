@@ -1,85 +1,84 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import RocketAnimation from '../../../../components/RocketAnimation';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { LoadingOverlay } from "@/components/ui/loading-overlay";
+import { ErrorModal } from "@/components/ui/error-modal";
 import API from "../../../../utils/axios";
-const LoginForm = () => {
+
+export default function LoginForm() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     rememberMe: false,
   });
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showRocket, setShowRocket] = useState(false);
-
-  const [message, setMessage] = useState('');
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [loadingState, setLoadingState] = useState({
+    isVisible: false,
+    status: "loading",
+    errorMessage: ""
+  });
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setShowRocket(true);
-    setMessage('');
-
-    const payload = {
-      email: formData.email,
-      password: formData.password,
-    };
+    setLoadingState({ isVisible: true, status: "loading", errorMessage: "" });
 
     try {
-      const response = await API.post("/auth/login", payload);
-      const data = response.data;
-      console.log("User:", data);
+      const response = await API.post("/auth/login", {
+        email: formData.email,
+        password: formData.password,
+      });
 
-      // Store tokens & role flag
+      const { access_token, refresh_token, is_admin } = response.data;
+
+      // Save tokens depending on "Remember Me"
       const storage = formData.rememberMe ? localStorage : sessionStorage;
-      storage.setItem("access_token", data.access_token);
-      storage.setItem("refresh_token", data.refresh_token);
-      storage.setItem("is_admin", JSON.stringify(data.is_admin));
+      storage.setItem("access_token", access_token);
+      storage.setItem("refresh_token", refresh_token);
+      storage.setItem("is_admin", JSON.stringify(is_admin));
+      storage.setItem("email", formData.email);
 
-      setMessage('✅ Login successful! Redirecting...');
+      setLoadingState({
+        isVisible: true,
+        status: "success",
+        errorMessage: "✅ Logging you in...",
+      });
 
       setTimeout(() => {
-        setShowRocket(false);
-        setMessage('');
-        setIsLoading(false);
-
-        // Navigate based on role
-        if (data.is_admin) {
-          navigate("/admin-dashboard", { replace: true });
-        } else {
-          navigate("/user-dashboard", { replace: true });
-        }
-      }, 2000);
+        setLoadingState(prev => ({ ...prev, isVisible: false }));
+        navigate(is_admin ? "/admin-dashboard" : "/user-dashboard", { replace: true });
+      }, 1000);
 
     } catch (err) {
-      console.error("Login error:", err);
-      setMessage(err.response?.data?.detail || '❌ Login failed. Try again.');
+      let errorMessage = "❌ Login failed. Try again.";
+      const data = err.response?.data;
 
+      if (data) {
+        if (Array.isArray(data.detail)) errorMessage = data.detail.map(e => `❌ ${e.msg}`).join(" ");
+        else if (typeof data.detail === "string") errorMessage = `❌ ${data.detail}`;
+        else if (typeof data.message === "string") errorMessage = `❌ ${data.message}`;
+      }
+
+      setLoadingState({ isVisible: true, status: "error", errorMessage });
       setTimeout(() => {
-        setShowRocket(false);
-        setMessage('');
-        setIsLoading(false);
-      }, 2000);
+        setLoadingState(prev => ({ ...prev, isVisible: false }));
+        setShowErrorModal(true);
+      }, 1000);
     }
   };
-
 
   return (
     <>
       <div className="glass-card p-8 lg:p-12 w-full max-w-md fade-in-up delay-300">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-foreground mb-2">Sign In</h2>
-          <p className="text-muted-foreground">
-            Welcome back! Please sign in to your account.
-          </p>
+          <p className="text-muted-foreground">Welcome back! Please sign in to your account.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Email Field */}
-          <div className="space-y-2">
+          <div className="space-y-4">
             <label htmlFor="email" className="text-sm font-medium text-foreground">Email</label>
             <div className="relative">
               <Mail size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
@@ -96,7 +95,7 @@ const LoginForm = () => {
           </div>
 
           {/* Password Field */}
-          <div className="space-y-2">
+          <div className="space-y-8">
             <label htmlFor="password" className="text-sm font-medium text-foreground">Password</label>
             <div className="relative">
               <Lock size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
@@ -130,7 +129,7 @@ const LoginForm = () => {
               />
               <span className="text-sm text-muted-foreground">Remember me</span>
             </label>
-           <Link to="/forgot-password" className="text-sm text-primary hover:text-primary-glow transition-colors">
+            <Link to="/forgot-password" className="text-sm text-primary hover:text-primary-glow transition-colors">
               Forgot password?
             </Link>
           </div>
@@ -138,35 +137,40 @@ const LoginForm = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={loadingState.isVisible}
             className="btn-gradient w-full disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? 'Signing In...' : 'Sign In'}
+            {loadingState.status === "loading" ? "Sign In" : "Signing In..."}
           </button>
         </form>
- {message && <p className="mt-4 text-center">{message}</p>}
+
         {/* Sign Up Link */}
         <div className="mt-8 text-center">
           <p className="text-muted-foreground">
             Don&apos;t have an account?{' '}
-            <a
-              href="/signup"
-              className="text-primary hover:text-primary-glow transition-colors font-medium"
-            >
+            <Link to="/signup" className="text-primary hover:text-primary-glow transition-colors font-medium">
               Sign up
-            </a>
+            </Link>
           </p>
         </div>
       </div>
 
-      {/* Rocket Animation */}
-      <RocketAnimation
-        isVisible={showRocket}
-        message="Signing In..."
-        onComplete={() => { }}
+      {/* Overlays */}
+      <LoadingOverlay
+        isVisible={loadingState.isVisible}
+        status={loadingState.status}
+        loadingText="Signing In..."
+        successText="Login successful!"
+        errorText={loadingState.errorMessage}
+        onComplete={() => setLoadingState(prev => ({ ...prev, isVisible: false }))}
+      />
+
+      <ErrorModal
+        isOpen={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="Authentication Failed"
+        message={loadingState.errorMessage}
       />
     </>
   );
-};
-
-export default LoginForm;
+}

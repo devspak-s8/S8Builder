@@ -3,24 +3,17 @@ import { ForgotPasswordForm } from "./Components/ForrgotPasswordForm";
 import WelcomeSection from "@/components/WelcomeSection";
 const ForgotPassword = () => {
   return (
-    <div className="min-h-screen relative bg-background overflow-hidden">
-      <BackgroundBlobs />
-      
-      <div className="relative z-10 min-h-screen flex">
-        {/* Left Side - Welcome Section */}
-       
-         <div className="hidden lg:block">
-          <WelcomeSection />
-        </div>
-
-        {/* Right Side - Form */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-          <div className="w-full max-w-md">
+   <div className="min-h-screen relative">
+        <BackgroundBlobs />
+  
+        {/* Main Content */}
+          {/* Left Column - Welcome Section */}
+  
+          {/* Right Column - Login Form */}
+          <div className="flex items-center justify-center p-8 lg:p-12 mt-10">
             <ForgotPasswordForm />
-          </div>
         </div>
       </div>
-    </div>
   );
 };
 

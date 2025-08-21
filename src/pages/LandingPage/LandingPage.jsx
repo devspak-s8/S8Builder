@@ -38,7 +38,6 @@ export default function LandingPage({ children }) {
           <Features />
           <HowItWorks />
           <Testimonials />
-          <Integrations />
           <FAQ />
           <CTA />
 
